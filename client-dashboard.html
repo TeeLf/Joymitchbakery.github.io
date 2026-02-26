@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders – Bake and Bloom</title>
+  <meta name="robots" content="noindex, nofollow"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --pink:#f4a7b9;--deep:#e06b8b;--rose:#c94d74;
+      --cream:#fff8f9;--white:#fff;--text:#4a2535;
+      --soft:#9a6070;--tan:#f8d7e3;--blush:#fde8ef;
+      --green:#1a9c4b;--greenl:#e8f8ee;
+      --amber:#d97706;--amberl:#fef3c7;
+    }
+    html{scroll-behavior:smooth;}
+    body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+    /* ── TOPBAR ── */
+    .topbar{background:rgba(255,248,249,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--tan);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+    .tb-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;}
+    .tb-logo .name{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;color:var(--rose);}
+    .tb-logo .sub{font-size:.58rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);}
+    .tb-right{display:flex;align-items:center;gap:.75rem;}
+    .tb-back{background:var(--tan);color:var(--rose);border:none;border-radius:20px;padding:.42rem .9rem;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;text-decoration:none;transition:background .2s;}
+    .tb-back:hover{background:var(--pink);}
+    .refresh-btn{background:var(--deep);color:#fff;border:none;border-radius:20px;padding:.42rem .9rem;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;transition:background .2s;}
+    .refresh-btn:hover{background:var(--rose);}
+    .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pdot 1.5s ease-in-out infinite;flex-shrink:0;}
+    @keyframes pdot{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+    /* ── HERO ── */
+    .hero{background:linear-gradient(135deg,#fff0f5,var(--blush));padding:2.5rem 2rem;text-align:center;border-bottom:1px solid var(--tan);}
+    .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:var(--text);margin-bottom:.5rem;}
+    .hero h1 em{color:var(--rose);font-style:italic;}
+    .hero p{font-size:.92rem;color:var(--soft);max-width:420px;margin:0 auto;}
+
+    /* ── PHONE LOOKUP ── */
+    .lookup-section{max-width:500px;margin:2rem auto;padding:0 1.5rem;}
+    .lookup-card{background:var(--white);border:2px solid var(--tan);border-radius:20px;padding:1.75rem;box-shadow:0 4px 20px rgba(201,77,116,.08);}
+    .lookup-card h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;margin-bottom:1rem;}
+    .lookup-row{display:flex;gap:.6rem;}
+    .phone-pfx{padding:.8rem .85rem;border:2px solid var(--tan);border-radius:10px;background:var(--blush);font-size:.88rem;font-weight:800;color:var(--text);white-space:nowrap;flex-shrink:0;}
+    .lookup-input{flex:1;padding:.8rem 1rem;border:2px solid var(--tan);border-radius:10px;font-family:'Nunito',sans-serif;font-size:.9rem;color:var(--text);background:var(--cream);outline:none;transition:border-color .2s;}
+    .lookup-input:focus{border-color:var(--deep);}
+    .lookup-btn{background:var(--deep);color:#fff;border:none;border-radius:10px;padding:.8rem 1.25rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:background .2s;white-space:nowrap;}
+    .lookup-btn:hover{background:var(--rose);}
+
+    /* ── NOTICE BANNER ── */
+    .notice-banner{max-width:900px;margin:.75rem auto 0;padding:0 1.5rem;}
+    .notice-item{background:linear-gradient(135deg,var(--rose),var(--deep));color:#fff;border-radius:14px;padding:1rem 1.25rem;margin-bottom:.65rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
+    .notice-item .ni-msg{font-size:.88rem;font-weight:700;line-height:1.5;flex:1;}
+    .notice-item .ni-time{font-size:.72rem;opacity:.7;white-space:nowrap;}
+
+    /* ── ORDERS SECTION ── */
+    .orders-section{max-width:900px;margin:1.75rem auto 3rem;padding:0 1.5rem;}
+    .sec-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;}
+    .sec-hd h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;}
+    .count-badge{background:var(--tan);color:var(--rose);font-size:.72rem;font-weight:800;padding:.22rem .65rem;border-radius:20px;}
+    .order-card{background:var(--white);border:2px solid var(--tan);border-radius:18px;padding:1.4rem;margin-bottom:1rem;transition:box-shadow .2s,border-color .2s;}
+    .order-card:hover{box-shadow:0 6px 22px rgba(201,77,116,.1);}
+    .order-card.pending{border-left:4px solid var(--amber);}
+    .order-card.confirmed{border-left:4px solid var(--green);}
+    .order-card.delivered{border-left:4px solid var(--deep);}
+    .order-card.cancelled{border-left:4px solid #ef4444;opacity:.75;}
+    .oc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.85rem;gap:1rem;flex-wrap:wrap;}
+    .oc-id{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);}
+    .oc-time{font-size:.76rem;color:var(--soft);}
+    .status-pill{font-size:.7rem;font-weight:800;padding:.25rem .75rem;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;}
+    .sp-pending{background:var(--amberl);color:var(--amber);}
+    .sp-confirmed{background:var(--greenl);color:var(--green);}
+    .sp-delivered{background:var(--blush);color:var(--rose);}
+    .sp-cancelled{background:#fee2e2;color:#ef4444;}
+    .oc-items{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.85rem;}
+    .item-chip{background:var(--blush);border-radius:20px;padding:.28rem .8rem;font-size:.82rem;font-weight:700;color:var(--text);}
+    .oc-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;}
+    .oc-total{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700;color:var(--rose);}
+    .oc-pay{font-size:.76rem;color:var(--soft);font-weight:600;}
+    .progress-track{display:flex;align-items:center;gap:.4rem;margin-top:.85rem;flex-wrap:wrap;}
+    .prog-step{display:flex;align-items:center;gap:.35rem;font-size:.74rem;font-weight:700;}
+    .prog-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--tan);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0;}
+    .prog-dot.done{background:var(--green);border-color:var(--green);color:#fff;}
+    .prog-dot.active{background:var(--amber);border-color:var(--amber);color:#fff;animation:pdot 1.2s ease-in-out infinite;}
+    .prog-line{flex:1;height:2px;background:var(--tan);border-radius:2px;min-width:20px;}
+    .prog-line.done{background:var(--green);}
+    .empty-state{text-align:center;padding:4rem 2rem;}
+    .empty-state .ei{font-size:4rem;display:block;margin-bottom:1rem;}
+    .empty-state p{font-size:.94rem;color:var(--soft);line-height:1.7;}
+
+    /* ── STATS ── */
+    .stats-row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+    .mini-stat{background:var(--white);border:2px solid var(--tan);border-radius:14px;padding:1rem 1.25rem;flex:1;min-width:120px;text-align:center;}
+    .ms-val{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;line-height:1;}
+    .ms-lbl{font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-top:.2rem;}
+    .ms-val.green{color:var(--green);}
+    .ms-val.rose{color:var(--rose);}
+    .ms-val.amber{color:var(--amber);}
+
+    /* ── ORDER FORM SHORTCUT ── */
+    .quick-order{background:linear-gradient(135deg,var(--rose),var(--deep));border-radius:20px;padding:2rem;margin-bottom:2rem;text-align:center;}
+    .quick-order h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:#fff;margin-bottom:.5rem;}
+    .quick-order p{font-size:.86rem;color:rgba(255,255,255,.8);margin-bottom:1.25rem;}
+    .quick-order a{background:#fff;color:var(--rose);border-radius:30px;padding:.78rem 2rem;font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:800;text-decoration:none;transition:all .2s;display:inline-block;}
+    .quick-order a:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.2);}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;top:5rem;right:1.5rem;z-index:600;padding:.85rem 1.35rem;border-radius:12px;font-size:.86rem;font-weight:700;transform:translateX(130%);transition:transform .4s ease;max-width:280px;color:#fff;}
+    .toast.show{transform:translateX(0);}
+    .toast.green{background:var(--green);}
+    .toast.rose{background:var(--rose);}
+
+    @media(max-width:600px){
+      .topbar{padding:0 1rem;}
+      .orders-section,.lookup-section,.notice-banner{padding:0 1rem;}
+      .stats-row{gap:.65rem;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="tb-logo" href="index.html">
+    <div>
+      <div class="name">Bake and Bloom</div>
+      <div class="sub">My Orders</div>
+    </div>
+  </a>
+  <div class="tb-right">
+    <div class="live-dot" title="Live updates every 3 seconds"></div>
+    <button class="refresh-btn" onclick="refresh()">↻ Refresh</button>
+    <a class="tb-back" href="index.html">← Back to Shop</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Track Your <em>Orders</em> 🌸</h1>
+  <p>Enter your phone number to see all your Bake and Bloom orders and their live status.</p>
+</div>
+
+<!-- PHONE LOOKUP -->
+<div class="lookup-section">
+  <div class="lookup-card">
+    <h3>🔍 Find My Orders</h3>
+    <div class="lookup-row">
+      <span class="phone-pfx">🇰🇪 +254</span>
+      <input class="lookup-input" type="tel" id="lookupPhone" placeholder="7XX XXX XXX" maxlength="9" inputmode="numeric" onkeydown="if(event.key==='Enter')lookupOrders()"/>
+      <button class="lookup-btn" onclick="lookupOrders()">Search</button>
+    </div>
+    <p style="font-size:.76rem;color:var(--soft);margin-top:.75rem;">Use the same number you used when placing your order.</p>
+  </div>
+</div>
+
+<!-- NOTICES FROM JOY -->
+<div class="notice-banner" id="noticeBanner"></div>
+
+<!-- ORDERS -->
+<div class="orders-section" id="ordersSection" style="display:none;">
+  <div class="stats-row" id="statsRow"></div>
+  <div class="sec-hd">
+    <h3>📋 My Orders</h3>
+    <span class="count-badge" id="orderCount">0 orders</span>
+  </div>
+  <div id="ordersList"></div>
+</div>
+
+<!-- ALL ORDERS (no lookup, public view) -->
+<div class="orders-section" id="allOrdersSection">
+  <div class="quick-order">
+    <h3>Craving something sweet? 🎂</h3>
+    <p>Order freshly baked cakes from Chef Joy Mitchell. KSh 35 a slice, free delivery!</p>
+    <a href="index.html#menu">Order Now →</a>
+  </div>
+  <div class="sec-hd">
+    <h3>📋 All Recent Orders</h3>
+    <span class="count-badge" id="allCount">0 orders</span>
+  </div>
+  <div id="allOrdersList"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let currentPhone='';
+
+  function getOrders(){try{return JSON.parse(localStorage.getItem('bb_orders')||'[]');}catch{return[];}}
+  function getNotices(){try{return JSON.parse(localStorage.getItem('bb_notices')||'[]');}catch{return[];}}
+
+  /* ── Notices ── */
+  function renderNotices(){
+    const notices=getNotices().slice(-3).reverse();
+    const b=document.getElementById('noticeBanner');
+    if(!notices.length){b.innerHTML='';return;}
+    b.innerHTML=notices.map(n=>`
+      <div class="notice-item">
+        <div class="ni-msg">📢 <strong>From Joy:</strong> ${n.msg}</div>
+        <div class="ni-time">${new Date(n.time).toLocaleDateString('en-KE',{month:'short',day:'numeric'})}</div>
+      </div>
+    `).join('');
+  }
+
+  /* ── Lookup orders by phone ── */
+  function lookupOrders(){
+    const raw=document.getElementById('lookupPhone').value.trim();
+    if(!raw||raw.length<9){showToast('Enter a valid 9-digit number','rose');return;}
+    currentPhone='+254'+raw;
+    const allOrders=getOrders();
+    const mine=allOrders.filter(o=>o.phone&&o.phone.replace(/\s/g,'')===currentPhone.replace(/\s/g,''));
+    if(!mine.length){showToast('No orders found for this number. Check the number and try again.','rose');return;}
+    document.getElementById('allOrdersSection').style.display='none';
+    document.getElementById('ordersSection').style.display='block';
+    renderMyOrders(mine);
+    showToast(`Found ${mine.length} order${mine.length>1?'s':''}!`,'green');
+  }
+
+  function renderMyOrders(orders){
+    const ordered=[...orders].reverse();
+    document.getElementById('orderCount').textContent=orders.length+' order'+(orders.length>1?'s':'');
+    // stats
+    const confirmed=orders.filter(o=>o.status==='Confirmed'||o.status==='Delivered');
+    const spent=confirmed.reduce((s,o)=>s+o.total,0);
+    const pending=orders.filter(o=>o.status==='Pending').length;
+    document.getElementById('statsRow').innerHTML=`
+      <div class="mini-stat"><div class="ms-val green">KSh ${spent}</div><div class="ms-lbl">Total Spent</div></div>
+      <div class="mini-stat"><div class="ms-val rose">${orders.length}</div><div class="ms-lbl">Orders</div></div>
+      <div class="mini-stat"><div class="ms-val amber">${pending}</div><div class="ms-lbl">Pending</div></div>
+    `;
+    document.getElementById('ordersList').innerHTML=ordered.map(o=>orderCard(o)).join('') || '<div class="empty-state"><span class="ei">🎂</span><p>No orders found for this number.</p></div>';
+  }
+
+  function renderAllOrders(){
+    const all=[...getOrders()].reverse().slice(0,20);
+    document.getElementById('allCount').textContent=all.length+' recent';
+    document.getElementById('allOrdersList').innerHTML=all.length?all.map(o=>orderCard(o,true)).join(''):`
+      <div class="empty-state">
+        <span class="ei">🍰</span>
+        <p>No orders yet.<br/>Be the first to order from Bake and Bloom!</p>
+      </div>`;
+  }
+
+  function orderCard(o, masked=false){
+    const statusClass=o.status.toLowerCase();
+    const spClass={'Pending':'sp-pending','Confirmed':'sp-confirmed','Delivered':'sp-delivered','Cancelled':'sp-cancelled'}[o.status]||'sp-pending';
+    const t=new Date(o.time);
+    const timeStr=t.toLocaleDateString('en-KE',{weekday:'short',month:'short',day:'numeric'})+' at '+t.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit',hour12:false});
+    let itemsHtml='';
+    if(o.items&&o.items.length){
+      itemsHtml=o.items.map(i=>`<span class="item-chip">${i.emoji||'🎂'} ${i.name} × ${i.qty}</span>`).join('');
+    } else if(o.cake){
+      itemsHtml=`<span class="item-chip">🎂 ${o.cake.split('–')[0].trim()} × ${o.qty||1}</span>`;
+    }
+    // progress
+    const steps=['Received','Confirmed','On the Way','Delivered'];
+    const stepIdx={'Pending':0,'Confirmed':1,'Delivered':3,'Cancelled':-1}[o.status]??0;
+    const progressHtml=stepIdx>=0?`<div class="progress-track">${steps.map((s,i)=>{
+      const done=i<=stepIdx; const active=i===stepIdx;
+      return (i>0?`<div class="prog-line ${i<=stepIdx?'done':''}"></div>`:'')
+        +`<div class="prog-step"><div class="prog-dot ${done?(active?'active':'done'):''}">${done?'✓':i+1}</div><span style="color:${done?'var(--text)':'var(--soft)'};font-size:.72rem;">${s}</span></div>`;
+    }).join('')}</div>`:'<p style="font-size:.78rem;color:#ef4444;margin-top:.5rem;">❌ Order Cancelled</p>';
+    const displayName=masked?o.name.charAt(0)+'*****':o.name;
+    const displayPhone=masked?(o.phone||'').slice(0,-4)+'****':(o.phone||'');
+    return `
+      <div class="order-card ${statusClass}">
+        <div class="oc-top">
+          <div>
+            <div class="oc-id">Order #${(o.id||'').slice(-8)}</div>
+            <div style="font-weight:800;font-size:.95rem;margin-top:.2rem;">${displayName}</div>
+            <div style="font-size:.76rem;color:var(--soft);">${displayPhone}</div>
+          </div>
+          <div style="text-align:right;">
+            <span class="status-pill ${spClass}">${o.status}</span>
+            <div class="oc-time" style="margin-top:.4rem;">${timeStr}</div>
+          </div>
+        </div>
+        <div class="oc-items">${itemsHtml||'<span class="item-chip">🎂 Cake order</span>'}</div>
+        <div class="oc-footer">
+          <div class="oc-total">KSh ${o.total}</div>
+          <div class="oc-pay">📱 ${o.payment||'M-Pesa'}</div>
+          ${o.address&&o.address!=='Not provided'?`<div style="font-size:.76rem;color:var(--soft);">📍 ${o.address}</div>`:''}
+        </div>
+        ${progressHtml}
+      </div>
+    `;
+  }
+
+  function showToast(msg,type='green'){
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.className='toast '+type+' show';
+    clearTimeout(window._tt);
+    window._tt=setTimeout(()=>t.classList.remove('show'),3200);
+  }
+
+  function refresh(){
+    renderNotices();
+    renderAllOrders();
+    if(currentPhone){
+      const all=getOrders();
+      const mine=all.filter(o=>o.phone&&o.phone.replace(/\s/g,'')===currentPhone.replace(/\s/g,''));
+      if(mine.length)renderMyOrders(mine);
+    }
+    showToast('Updated!','green');
+  }
+
+  /* ── Auto refresh every 3s ── */
+  setInterval(()=>{renderNotices();renderAllOrders();if(currentPhone){const all=getOrders();const mine=all.filter(o=>o.phone&&o.phone.replace(/\s/g,'')===currentPhone.replace(/\s/g,''));if(mine.length)renderMyOrders(mine);}},3000);
+
+  renderNotices();
+  renderAllOrders();
+</script>
+</body>
+</html>
